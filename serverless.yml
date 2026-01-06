@@ -1,0 +1,64 @@
+service: financing-simulator
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  
+  memorySize: 512
+  timeout: 30
+  
+  # Variáveis de ambiente
+  environment:
+    STAGE: ${self:provider.stage}
+    LOG_LEVEL: INFO
+    BACEN_API_URL: https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json
+    IBGE_API_URL: https://servicodados.ibge.gov.br/api/v3/agregados/1737/periodos/last/variaveis/2266
+    API_TIMEOUT: "3"
+    TAXA_BASE_ANUAL: "10.0"
+    TAXA_MEDIA_NACIONAL: "9.80"
+  
+  # Permissões IAM básicas
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+# Funções Lambda
+functions:
+  simulate:
+    handler: src/handlers/financing_handler.handler
+    description: Simula financiamento imobiliário
+    events:
+      - httpApi:
+          path: /financing/simulate
+          method: post
+  
+  health:
+    handler: src/handlers/health_handler.handler
+    description: Health check
+    events:
+      - httpApi:
+          path: /health
+          method: get
+
+# Package - o que incluir no deploy
+package:
+  patterns:
+    - '!.git/**'
+    - '!.github/**'
+    - '!.vscode/**'
+    - '!.pytest_cache/**'
+    - '!__pycache__/**'
+    - '!node_modules/**'
+    - '!venv/**'
+    - '!tests/**'
+    - '!*.md'
