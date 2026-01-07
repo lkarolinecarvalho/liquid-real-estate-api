@@ -3,12 +3,11 @@ name: Backend CI/CD
 on:
   push:
     branches: [ main, develop ]
+    tags:
+      - 'v*'
     paths:
       - 'backend/**'
       - '.github/workflows/ci-cd.yml'
-  push:
-    tags:
-      - 'v*'
   pull_request:
     branches: [ main ]
     paths:
