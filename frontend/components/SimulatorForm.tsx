@@ -6,6 +6,7 @@ import type { SimulationRequest } from '@/types/financing';
 interface SimulatorFormProps {
   onSubmit: (data: SimulationRequest) => void;
   isLoading: boolean;
+  initialData?: SimulationRequest;
 }
 
 const ESTADOS_BRASIL = [
@@ -14,13 +15,13 @@ const ESTADOS_BRASIL = [
   'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
 ];
 
-export default function SimulatorForm({ onSubmit, isLoading }: SimulatorFormProps) {
+export default function SimulatorForm({ onSubmit, isLoading, initialData }: SimulatorFormProps) {
   const [formData, setFormData] = useState<SimulationRequest>({
-    valor_imovel: 500000,
-    entrada: 100000,
-    prazo_meses: 360,
-    tipo_amortizacao: 'PRICE',
-    regiao: 'SP',
+    valor_imovel: initialData?.valor_imovel || 500000,
+    entrada: initialData?.entrada || 100000,
+    prazo_meses: initialData?.prazo_meses || 360,
+    tipo_amortizacao: initialData?.tipo_amortizacao || 'PRICE',
+    regiao: initialData?.regiao || 'SP'
   });
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import SimulatorForm from '@/components/SimulatorForm';
 import ResultsPanel from '@/components/ResultsPanel';
 import AmortizationChart from '@/components/AmortizationChart';
+import SimulationHistory from '@/components/SimulationHistory';
 import { FinancingAPI } from '@/services/api';
 import type { SimulationRequest, SimulationResponse } from '@/types/financing';
 
@@ -13,6 +14,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<SimulationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [historyRefresh, setHistoryRefresh] = useState(0);
+  const [formKey, setFormKey] = useState(0);
 
   const handleSimulate = async (data: SimulationRequest) => {
     setIsLoading(true);
@@ -22,6 +25,9 @@ export default function Home() {
     try {
       const response = await FinancingAPI.simulate(data);
       setResult(response);
+      
+      // Atualiza o histórico após nova simulação
+      setHistoryRefresh(prev => prev + 1);
       
       // Scroll suave para os resultados
       setTimeout(() => {
@@ -36,6 +42,15 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleReuseSimulation = (simulation: SimulationResponse) => {
+    // Rola para o topo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Carrega os dados da simulação anterior
+    setResult(simulation);
+    setFormKey(prev => prev + 1);
   };
 
   return (
@@ -71,7 +86,19 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Formulário - 1 coluna */}
           <div className="lg:col-span-1">
-            <SimulatorForm onSubmit={handleSimulate} isLoading={isLoading} />
+            <SimulatorForm 
+              key={formKey}
+              onSubmit={handleSimulate} 
+              isLoading={isLoading}
+              initialData={result ? {
+                valor_imovel: result.simulacao.valor_imovel,
+                entrada: result.simulacao.entrada,
+                prazo_meses: result.simulacao.prazo_meses,
+                tipo_amortizacao: result.simulacao.tipo_amortizacao as 'PRICE' | 'SAC',
+                regiao: 'SP'
+              } : undefined}
+            />
+
           </div>
 
           {/* Resultados - 2 colunas */}
@@ -124,6 +151,13 @@ export default function Home() {
                 <AmortizationChart data={result} />
               </div>
             )}
+
+            <div className="mt-8">
+              <SimulationHistory
+                onReuse={handleReuseSimulation}
+                refreshTrigger={historyRefresh}
+              />
+            </div>
           </div>
         </div>
 

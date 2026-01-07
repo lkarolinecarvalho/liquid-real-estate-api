@@ -69,12 +69,62 @@ export interface ParcelaAmortizacao {
 export interface SimulationResponse {
   request_id: string;
   timestamp: string;
-  simulacao: DadosSimulacao;
-  taxas: TaxasAplicadas;
-  resultado: ResultadoFinanciamento;
-  comparativo: Comparativo;
-  analise: Analise;
-  tabela_amortizacao_resumida: ParcelaAmortizacao[];
+  simulation_id?: string;
+  simulacao: {
+    valor_imovel: number;
+    entrada: number;
+    valor_financiado: number;
+    prazo_meses: number;
+    tipo_amortizacao: string;
+  };
+  taxas: {
+    indicador: {
+      indicador_usado: string;
+      valor_indicador: number;
+      fonte: string;
+      data_referencia: string;
+    };
+    taxa_juros_anual: number;
+    taxa_juros_mensal: number;
+    formula_aplicada: string;
+  };
+  resultado: {
+    parcela_mensal: number;
+    total_pago: number;
+    juros_totais: number;
+    percentual_juros: number;
+    primeira_parcela: {
+      valor: number;
+      juros: number;
+      amortizacao: number;
+      saldo_devedor: number;
+    };
+    ultima_parcela: {
+      valor: number;
+      juros: number;
+      amortizacao: number;
+      saldo_devedor: number;
+    };
+  };
+  comparativo: {
+    taxa_media_nacional: number;
+    diferenca_percentual: number;
+    classificacao: string;
+    mensagem: string;
+  };
+  analise: {
+    comprometimento_renda_sugerido: number;
+    renda_minima_sugerida: number;
+    viabilidade: string;
+    alertas: string[];
+  };
+  tabela_amortizacao_resumida?: Array<{ 
+    mes: number;
+    parcela: number;
+    juros: number;
+    amortizacao: number;
+    saldo_devedor: number;
+  }>;
 }
 
 export interface ApiError {

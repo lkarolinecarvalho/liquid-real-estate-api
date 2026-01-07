@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import type { SimulationRequest, SimulationResponse, ApiError } from '@/types/financing';
 
+export type { SimulationResponse, SimulationRequest, ApiError } from '@/types/financing';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://62dv6tdqh1.execute-api.us-east-1.amazonaws.com';
 
 const apiClient = axios.create({
@@ -45,6 +47,20 @@ export class FinancingAPI {
       throw new Error('API indisponível');
     }
   }
+
+  static async getHistory(limit: number = 3): Promise<HistoryResponse> {
+    try {
+      const response = await apiClient.get(`/financing/history?limit=${limit}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error);
+      throw new Error('Não foi possível carregar o histórico');
+    }
+  }
 }
 
 export default apiClient;
+export interface HistoryResponse {
+  total: number;
+  simulations: SimulationResponse[];
+}
