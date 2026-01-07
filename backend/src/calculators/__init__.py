@@ -6,10 +6,7 @@ from src.calculators.sac_calculator import SACCalculator
 
 
 class CalculatorFactory:
-    _calculators = {
-        "PRICE": PRICECalculator,
-        "SAC": SACCalculator
-    }
+    _calculators = {"PRICE": PRICECalculator, "SAC": SACCalculator}
 
     @classmethod
     def create(cls, tipo_amortizacao: Literal["PRICE", "SAC"]) -> BaseCalculator:
@@ -29,9 +26,4 @@ class CalculatorFactory:
         return list(cls._calculators.keys())
 
 
-__all__ = [
-    "BaseCalculator",
-    "PRICECalculator",
-    "SACCalculator",
-    "CalculatorFactory"
-]
+__all__ = ["BaseCalculator", "PRICECalculator", "SACCalculator", "CalculatorFactory"]

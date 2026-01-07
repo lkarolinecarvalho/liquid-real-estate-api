@@ -32,11 +32,7 @@ class IndicatorService:
         if selic:
             logger.info(
                 "Indicador obtido com sucesso",
-                extra={
-                    "tipo": "SELIC",
-                    "valor": selic.valor,
-                    "fonte": selic.fonte
-                }
+                extra={"tipo": "SELIC", "valor": selic.valor, "fonte": selic.fonte},
             )
             return selic
 
@@ -46,11 +42,7 @@ class IndicatorService:
         if ipca:
             logger.info(
                 "Indicador obtido via fallback",
-                extra={
-                    "tipo": "IPCA",
-                    "valor": ipca.valor,
-                    "fonte": ipca.fonte
-                }
+                extra={"tipo": "IPCA", "valor": ipca.valor, "fonte": ipca.fonte},
             )
             return ipca
 
@@ -81,15 +73,12 @@ class IndicatorService:
                 "indicador_tipo": indicador.tipo,
                 "indicador_valor": indicador.valor,
                 "taxa_anual": taxa_anual,
-                "taxa_mensal": taxa_mensal
-            }
+                "taxa_mensal": taxa_mensal,
+            },
         )
 
         return TaxaJuros(
-            taxa_anual=taxa_anual,
-            taxa_mensal=taxa_mensal,
-            indicador=indicador,
-            formula=formula
+            taxa_anual=taxa_anual, taxa_mensal=taxa_mensal, indicador=indicador, formula=formula
         )
 
     def _calcular_taxa_selic(self, selic: float) -> float:
@@ -105,7 +94,7 @@ class IndicatorService:
 
     def _converter_anual_para_mensal(self, taxa_anual: float) -> float:
         taxa_decimal = taxa_anual / 100
-        taxa_mensal_decimal = ((1 + taxa_decimal) ** (1/12)) - 1
+        taxa_mensal_decimal = ((1 + taxa_decimal) ** (1 / 12)) - 1
         taxa_mensal_percentual = taxa_mensal_decimal * 100
 
         return round(taxa_mensal_percentual, 4)
@@ -115,7 +104,7 @@ class IndicatorService:
             tipo="TAXA_BASE",
             valor=self.taxa_base_anual,
             fonte="Sistema (fallback)",
-            data_referencia=datetime.now().strftime("%Y-%m-%d")
+            data_referencia=datetime.now().strftime("%Y-%m-%d"),
         )
 
     def close(self):

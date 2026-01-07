@@ -17,7 +17,9 @@ class ComparisonService:
         diferenca = ((taxa_aplicada - self.taxa_media_nacional) / self.taxa_media_nacional) * 100
 
         if diferenca > 5:
-            classificacao: Literal["ACIMA_DA_MEDIA", "NA_MEDIA", "ABAIXO_DA_MEDIA"] = "ACIMA_DA_MEDIA"
+            classificacao: Literal["ACIMA_DA_MEDIA", "NA_MEDIA", "ABAIXO_DA_MEDIA"] = (
+                "ACIMA_DA_MEDIA"
+            )
             mensagem = f"A taxa aplicada está {abs(diferenca):.2f}% acima da média nacional"
         elif diferenca < -5:
             classificacao = "ABAIXO_DA_MEDIA"
@@ -32,15 +34,15 @@ class ComparisonService:
                 "taxa_aplicada": taxa_aplicada,
                 "taxa_media": self.taxa_media_nacional,
                 "diferenca_percentual": diferenca,
-                "classificacao": classificacao
-            }
+                "classificacao": classificacao,
+            },
         )
 
         return Comparativo(
             taxa_media_nacional=round(self.taxa_media_nacional, 2),
             diferenca_percentual=round(diferenca, 2),
             classificacao=classificacao,
-            mensagem=mensagem
+            mensagem=mensagem,
         )
 
     def analisar_viabilidade(
@@ -49,7 +51,7 @@ class ComparisonService:
         taxa_aplicada: float,
         taxa_media: float,
         prazo_meses: int,
-        percentual_juros: float
+        percentual_juros: float,
     ) -> Analise:
         renda_minima = parcela_mensal / (self.comprometimento_ideal / 100)
 
@@ -57,14 +59,14 @@ class ComparisonService:
             taxa_aplicada=taxa_aplicada,
             taxa_media=taxa_media,
             prazo_meses=prazo_meses,
-            percentual_juros=percentual_juros
+            percentual_juros=percentual_juros,
         )
 
         viabilidade = self._classificar_viabilidade(
             taxa_aplicada=taxa_aplicada,
             taxa_media=taxa_media,
             prazo_meses=prazo_meses,
-            percentual_juros=percentual_juros
+            percentual_juros=percentual_juros,
         )
 
         logger.info(
@@ -72,23 +74,19 @@ class ComparisonService:
             extra={
                 "viabilidade": viabilidade,
                 "renda_minima_sugerida": renda_minima,
-                "num_alertas": len(alertas)
-            }
+                "num_alertas": len(alertas),
+            },
         )
 
         return Analise(
             comprometimento_renda_sugerido=self.comprometimento_ideal,
             renda_minima_sugerida=round(renda_minima, 2),
             viabilidade=viabilidade,
-            alertas=alertas
+            alertas=alertas,
         )
 
     def _gerar_alertas(
-        self,
-        taxa_aplicada: float,
-        taxa_media: float,
-        prazo_meses: int,
-        percentual_juros: float
+        self, taxa_aplicada: float, taxa_media: float, prazo_meses: int, percentual_juros: float
     ) -> List[str]:
         alertas = []
 
@@ -99,9 +97,7 @@ class ComparisonService:
                 "considere pesquisar outras instituições financeiras"
             )
         elif diferenca_taxa > 5:
-            alertas.append(
-                "Taxa acima da média nacional: vale comparar com outras ofertas"
-            )
+            alertas.append("Taxa acima da média nacional: vale comparar com outras ofertas")
 
         if prazo_meses > 300:
             alertas.append(
@@ -124,18 +120,12 @@ class ComparisonService:
             )
 
         if not alertas:
-            alertas.append(
-                "Condições dentro dos padrões esperados para financiamento imobiliário"
-            )
+            alertas.append("Condições dentro dos padrões esperados para financiamento imobiliário")
 
         return alertas
 
     def _classificar_viabilidade(
-        self,
-        taxa_aplicada: float,
-        taxa_media: float,
-        prazo_meses: int,
-        percentual_juros: float
+        self, taxa_aplicada: float, taxa_media: float, prazo_meses: int, percentual_juros: float
     ) -> Literal["ALTA", "MODERADA", "BAIXA"]:
         pontos_negativos = 0
 

@@ -2,6 +2,7 @@
 Cliente para API do IBGE (Instituto Brasileiro de Geografia e Estatística).
 Consulta o IPCA (Índice Nacional de Preços ao Consumidor Amplo).
 """
+
 import logging
 import os
 from datetime import datetime
@@ -25,15 +26,12 @@ class IBGEClient:
     def __init__(self):
         self.base_url = os.getenv(
             "IBGE_API_URL",
-            "https://servicodados.ibge.gov.br/api/v3/agregados/1737/periodos/last/variaveis/2266"
+            "https://servicodados.ibge.gov.br/api/v3/agregados/1737/periodos/last/variaveis/2266",
         )
         self.timeout = int(os.getenv("API_TIMEOUT", "3"))
         self.max_retries = int(os.getenv("API_RETRY_ATTEMPTS", "2"))
 
-        self.http_client = BaseHTTPClient(
-            timeout=self.timeout,
-            max_retries=self.max_retries
-        )
+        self.http_client = BaseHTTPClient(timeout=self.timeout, max_retries=self.max_retries)
 
     def buscar_ipca(self) -> Optional[Indicador]:
         try:
@@ -55,10 +53,7 @@ class IBGEClient:
             except (KeyError, IndexError, TypeError) as e:
                 logger.warning(
                     "Formato inesperado na resposta do IBGE",
-                    extra={
-                        "error": str(e),
-                        "response": response_data
-                    }
+                    extra={"error": str(e), "response": response_data},
                 )
                 return None
 
@@ -66,8 +61,7 @@ class IBGEClient:
                 valor = float(valor_str)
             except ValueError:
                 logger.error(
-                    f"Erro ao converter valor do IPCA: {valor_str}",
-                    extra={"periodo": periodo}
+                    f"Erro ao converter valor do IPCA: {valor_str}", extra={"periodo": periodo}
                 )
                 return None
 
@@ -75,27 +69,16 @@ class IBGEClient:
 
             logger.info(
                 "IPCA obtido com sucesso",
-                extra={
-                    "valor": valor,
-                    "periodo": periodo,
-                    "data_referencia": data_referencia
-                }
+                extra={"valor": valor, "periodo": periodo, "data_referencia": data_referencia},
             )
 
             return Indicador(
-                tipo="IPCA",
-                valor=valor,
-                fonte="IBGE",
-                data_referencia=data_referencia
+                tipo="IPCA", valor=valor, fonte="IBGE", data_referencia=data_referencia
             )
 
         except Exception as e:
             logger.error(
-                "Erro ao buscar IPCA",
-                extra={
-                    "error": str(e),
-                    "error_type": type(e).__name__
-                }
+                "Erro ao buscar IPCA", extra={"error": str(e), "error_type": type(e).__name__}
             )
             return None
 
@@ -106,8 +89,7 @@ class IBGEClient:
             return f"{ano}-{mes}-01"
         except Exception as e:
             logger.warning(
-                f"Erro ao converter período '{periodo}', usando data atual",
-                extra={"error": str(e)}
+                f"Erro ao converter período '{periodo}', usando data atual", extra={"error": str(e)}
             )
             return datetime.now().strftime("%Y-%m-%d")
 

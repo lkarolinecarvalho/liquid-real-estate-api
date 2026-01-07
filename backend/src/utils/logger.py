@@ -28,11 +28,29 @@ class JSONFormatter(logging.Formatter):
         # Adicionar campos do extra
         if hasattr(record, "__dict__"):
             for key, value in record.__dict__.items():
-                if key not in ["name", "msg", "args", "created", "filename",
-                              "funcName", "levelname", "levelno", "lineno",
-                              "module", "msecs", "message", "pathname", "process",
-                              "processName", "relativeCreated", "thread", "threadName",
-                              "exc_info", "exc_text", "stack_info"]:
+                if key not in [
+                    "name",
+                    "msg",
+                    "args",
+                    "created",
+                    "filename",
+                    "funcName",
+                    "levelname",
+                    "levelno",
+                    "lineno",
+                    "module",
+                    "msecs",
+                    "message",
+                    "pathname",
+                    "process",
+                    "processName",
+                    "relativeCreated",
+                    "thread",
+                    "threadName",
+                    "exc_info",
+                    "exc_text",
+                    "stack_info",
+                ]:
                     log_data[key] = value
 
         # Adicionar exception info se existir

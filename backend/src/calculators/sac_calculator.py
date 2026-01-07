@@ -7,10 +7,7 @@ from src.models.domain import Parcela, TabelaAmortizacao
 class SACCalculator(BaseCalculator):
 
     def calcular(
-        self,
-        valor_financiado: float,
-        taxa_juros_mensal: float,
-        prazo_meses: int
+        self, valor_financiado: float, taxa_juros_mensal: float, prazo_meses: int
     ) -> TabelaAmortizacao:
         self._validar_parametros(valor_financiado, taxa_juros_mensal, prazo_meses)
 
@@ -19,26 +16,19 @@ class SACCalculator(BaseCalculator):
         amortizacao_constante = valor_financiado / prazo_meses
 
         parcelas = self._gerar_tabela(
-            valor_financiado,
-            amortizacao_constante,
-            taxa_decimal,
-            prazo_meses
+            valor_financiado, amortizacao_constante, taxa_decimal, prazo_meses
         )
 
         total_pago, total_juros = self._calcular_totais(parcelas)
 
-        return TabelaAmortizacao(
-            parcelas=parcelas,
-            total_pago=total_pago,
-            total_juros=total_juros
-        )
+        return TabelaAmortizacao(parcelas=parcelas, total_pago=total_pago, total_juros=total_juros)
 
     def _gerar_tabela(
         self,
         saldo_inicial: float,
         amortizacao_constante: float,
         taxa_decimal: float,
-        num_parcelas: int
+        num_parcelas: int,
     ) -> List[Parcela]:
         parcelas = []
         saldo_devedor = saldo_inicial
@@ -60,7 +50,7 @@ class SACCalculator(BaseCalculator):
                 valor_parcela=valor_parcela,
                 valor_juros=juros,
                 valor_amortizacao=amortizacao,
-                saldo_devedor=saldo_devedor
+                saldo_devedor=saldo_devedor,
             )
 
             parcelas.append(parcela)
@@ -68,10 +58,7 @@ class SACCalculator(BaseCalculator):
         return parcelas
 
     def calcular_primeira_parcela(
-        self,
-        valor_financiado: float,
-        taxa_juros_mensal: float,
-        prazo_meses: int
+        self, valor_financiado: float, taxa_juros_mensal: float, prazo_meses: int
     ) -> float:
         taxa_decimal = self._converter_taxa_percentual_para_decimal(taxa_juros_mensal)
         amortizacao = valor_financiado / prazo_meses
@@ -80,10 +67,7 @@ class SACCalculator(BaseCalculator):
         return amortizacao + juros_primeiro_mes
 
     def calcular_ultima_parcela(
-        self,
-        valor_financiado: float,
-        taxa_juros_mensal: float,
-        prazo_meses: int
+        self, valor_financiado: float, taxa_juros_mensal: float, prazo_meses: int
     ) -> float:
 
         taxa_decimal = self._converter_taxa_percentual_para_decimal(taxa_juros_mensal)

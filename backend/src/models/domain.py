@@ -32,7 +32,7 @@ class Parcela:
             "parcela": round(self.valor_parcela, 2),
             "juros": round(self.valor_juros, 2),
             "amortizacao": round(self.valor_amortizacao, 2),
-            "saldo_devedor": round(self.saldo_devedor, 2)
+            "saldo_devedor": round(self.saldo_devedor, 2),
         }
 
 

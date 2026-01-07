@@ -12,6 +12,7 @@ class CalculationException(Exception):
 
 def handle_exception(exception: Exception, context: str = "") -> None:
     import logging
+
     logger = logging.getLogger(__name__)
 
     logger.error(
@@ -19,7 +20,7 @@ def handle_exception(exception: Exception, context: str = "") -> None:
         extra={
             "exception_type": type(exception).__name__,
             "exception_message": str(exception),
-            "context": context
+            "context": context,
         },
-        exc_info=True
+        exc_info=True,
     )

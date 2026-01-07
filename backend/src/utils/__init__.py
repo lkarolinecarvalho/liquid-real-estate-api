@@ -11,5 +11,5 @@ __all__ = [
     "BusinessException",
     "ExternalServiceException",
     "CalculationException",
-    "handle_exception"
+    "handle_exception",
 ]

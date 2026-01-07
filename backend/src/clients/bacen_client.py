@@ -20,15 +20,12 @@ class BacenClient:
     def __init__(self):
         self.base_url = os.getenv(
             "BACEN_API_URL",
-            "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json"
+            "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json",
         )
         self.timeout = int(os.getenv("API_TIMEOUT", "3"))
         self.max_retries = int(os.getenv("API_RETRY_ATTEMPTS", "2"))
 
-        self.http_client = BaseHTTPClient(
-            timeout=self.timeout,
-            max_retries=self.max_retries
-        )
+        self.http_client = BaseHTTPClient(timeout=self.timeout, max_retries=self.max_retries)
 
     def buscar_selic(self) -> Optional[Indicador]:
         try:
@@ -43,7 +40,7 @@ class BacenClient:
             if not isinstance(response_data, list) or len(response_data) == 0:
                 logger.warning(
                     "Formato inesperado na resposta do Banco Central",
-                    extra={"response": response_data}
+                    extra={"response": response_data},
                 )
                 return None
 
@@ -56,8 +53,7 @@ class BacenClient:
                 valor = float(valor_str)
             except ValueError:
                 logger.error(
-                    f"Erro ao converter valor da SELIC: {valor_str}",
-                    extra={"dados": dados}
+                    f"Erro ao converter valor da SELIC: {valor_str}", extra={"dados": dados}
                 )
                 return None
 
@@ -65,26 +61,19 @@ class BacenClient:
 
             logger.info(
                 "SELIC obtida com sucesso",
-                extra={
-                    "valor": valor,
-                    "data_referencia": data_referencia
-                }
+                extra={"valor": valor, "data_referencia": data_referencia},
             )
 
             return Indicador(
                 tipo="SELIC",
                 valor=valor,
                 fonte="Banco Central do Brasil",
-                data_referencia=data_referencia
+                data_referencia=data_referencia,
             )
 
         except Exception as e:
             logger.error(
-                "Erro ao buscar SELIC",
-                extra={
-                    "error": str(e),
-                    "error_type": type(e).__name__
-                }
+                "Erro ao buscar SELIC", extra={"error": str(e), "error_type": type(e).__name__}
             )
             return None
 
@@ -94,8 +83,7 @@ class BacenClient:
             return data_obj.strftime("%Y-%m-%d")
         except Exception as e:
             logger.warning(
-                f"Erro ao converter data '{data_str}', usando data atual",
-                extra={"error": str(e)}
+                f"Erro ao converter data '{data_str}', usando data atual", extra={"error": str(e)}
             )
             return datetime.now().strftime("%Y-%m-%d")
 

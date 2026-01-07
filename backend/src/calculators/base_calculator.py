@@ -7,10 +7,7 @@ from src.models.domain import Parcela, TabelaAmortizacao
 class BaseCalculator(ABC):
     @abstractmethod
     def calcular(
-        self,
-        valor_financiado: float,
-        taxa_juros_mensal: float,
-        prazo_meses: int
+        self, valor_financiado: float, taxa_juros_mensal: float, prazo_meses: int
     ) -> TabelaAmortizacao:
         pass
 
@@ -18,10 +15,7 @@ class BaseCalculator(ABC):
         return taxa_percentual / 100
 
     def _validar_parametros(
-        self,
-        valor_financiado: float,
-        taxa_juros_mensal: float,
-        prazo_meses: int
+        self, valor_financiado: float, taxa_juros_mensal: float, prazo_meses: int
     ) -> None:
         if valor_financiado <= 0:
             raise ValueError("Valor financiado deve ser maior que zero")

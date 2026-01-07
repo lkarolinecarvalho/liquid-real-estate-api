@@ -6,41 +6,22 @@ from src.models.domain import Parcela, TabelaAmortizacao
 
 class PRICECalculator(BaseCalculator):
     def calcular(
-        self,
-        valor_financiado: float,
-        taxa_juros_mensal: float,
-        prazo_meses: int
+        self, valor_financiado: float, taxa_juros_mensal: float, prazo_meses: int
     ) -> TabelaAmortizacao:
         self._validar_parametros(valor_financiado, taxa_juros_mensal, prazo_meses)
 
         taxa_decimal = self._converter_taxa_percentual_para_decimal(taxa_juros_mensal)
 
-        parcela_fixa = self._calcular_parcela_price(
-            valor_financiado,
-            taxa_decimal,
-            prazo_meses
-        )
+        parcela_fixa = self._calcular_parcela_price(valor_financiado, taxa_decimal, prazo_meses)
 
-        parcelas = self._gerar_tabela(
-            valor_financiado,
-            parcela_fixa,
-            taxa_decimal,
-            prazo_meses
-        )
+        parcelas = self._gerar_tabela(valor_financiado, parcela_fixa, taxa_decimal, prazo_meses)
 
         total_pago, total_juros = self._calcular_totais(parcelas)
 
-        return TabelaAmortizacao(
-            parcelas=parcelas,
-            total_pago=total_pago,
-            total_juros=total_juros
-        )
+        return TabelaAmortizacao(parcelas=parcelas, total_pago=total_pago, total_juros=total_juros)
 
     def _calcular_parcela_price(
-        self,
-        valor_presente: float,
-        taxa_decimal: float,
-        num_parcelas: int
+        self, valor_presente: float, taxa_decimal: float, num_parcelas: int
     ) -> float:
         if taxa_decimal == 0:
             return valor_presente / num_parcelas
@@ -52,11 +33,7 @@ class PRICECalculator(BaseCalculator):
         return parcela
 
     def _gerar_tabela(
-        self,
-        saldo_inicial: float,
-        parcela_fixa: float,
-        taxa_decimal: float,
-        num_parcelas: int
+        self, saldo_inicial: float, parcela_fixa: float, taxa_decimal: float, num_parcelas: int
     ) -> List[Parcela]:
         parcelas = []
         saldo_devedor = saldo_inicial
@@ -76,7 +53,7 @@ class PRICECalculator(BaseCalculator):
                 valor_parcela=parcela_fixa,
                 valor_juros=juros,
                 valor_amortizacao=amortizacao,
-                saldo_devedor=saldo_devedor
+                saldo_devedor=saldo_devedor,
             )
 
             parcelas.append(parcela)
