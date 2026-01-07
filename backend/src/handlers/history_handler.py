@@ -11,7 +11,7 @@ logger.setLevel(logging.INFO)
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Handler para buscar histórico de simulações
-    
+
     Query Parameters:
         - user_identifier (opcional): Filtrar por usuário específico
         - limit (opcional): Número máximo de resultados (padrão: 10)
@@ -69,10 +69,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 def get_by_id(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Handler para buscar simulação específica por ID
-    
+
     Path Parameters:
         - id: ID da simulação
-    
+
     Query Parameters:
         - created_at: Timestamp de criação (ISO format)
     """

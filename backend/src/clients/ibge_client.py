@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class IBGEClient:
-    """  
+    """
     API utilizada: IBGE - Agregados
     Documentação: https://servicodados.ibge.gov.br/api/docs/agregados
-    
+
     Agregado consultado: 1737 (IPCA)
     Variável: 2266 (IPCA - Variação mensal)
     """

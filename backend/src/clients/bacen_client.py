@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class BacenClient:
-    """    
+    """
     API utilizada: BCB - SGS (Sistema Gerenciador de Séries Temporais)
     Documentação: https://www3.bcb.gov.br/sgspub/
-    
+
     Série consultada: 432 (Taxa Selic)
     """
 

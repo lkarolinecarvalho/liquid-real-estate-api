@@ -1,4 +1,5 @@
 import logging
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from src.calculators import CalculatorFactory
@@ -17,6 +18,9 @@ from src.models.responses import (
 )
 from src.services.comparison_service import ComparisonService
 from src.services.indicator_service import IndicatorService
+
+if TYPE_CHECKING:
+    from src.models.domain import TaxaJuros
 
 logger = logging.getLogger(__name__)
 

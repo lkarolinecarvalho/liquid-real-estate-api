@@ -161,8 +161,8 @@ def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
     if isinstance(body, str):
         try:
             return json.loads(body)
-        except json.JSONDecodeError:
-            raise ValueError("Body JSON inválido")
+        except json.JSONDecodeError as err:
+            raise ValueError("Body JSON inválido") from err
 
     return body
 
@@ -172,7 +172,6 @@ def _success_response(result: Any, request_id: str, simulation_id: str = None) -
 
     response_dict['request_id'] = request_id
 
-    # ✨ NOVO: Adiciona simulation_id se foi salvo no DynamoDB
     if simulation_id:
         response_dict['simulation_id'] = simulation_id
 

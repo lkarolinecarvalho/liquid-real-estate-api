@@ -6,15 +6,14 @@ from datetime import datetime
 
 class JSONFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        """
-        Formata o log record como JSON.
-        
-        Args:
-            record: Record de log
-            
-        Returns:
-            String JSON formatada
-        """
+        log_data = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+
+        # A
         log_data = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "level": record.levelname,
@@ -46,10 +45,10 @@ class JSONFormatter(logging.Formatter):
 def setup_logger(name: str) -> logging.Logger:
     """
     Configura logger com formato JSON estruturado.
-    
+
     Args:
         name: Nome do logger
-        
+
     Returns:
         Logger configurado
     """

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class IndicatorService:
     """
     Serviço responsável por buscar indicadores econômicos e calcular taxas de juros.
-    
+
     Estratégia de fallback:
     1. Tenta buscar SELIC (Banco Central) - primário
     2. Se falhar, tenta buscar IPCA (IBGE) - fallback
