@@ -1,28 +1,22 @@
 """
 Módulo de modelos de dados.
 """
+from src.models.domain import Indicador, Parcela, ResultadoCalculo, TabelaAmortizacao, TaxaJuros
 from src.models.requests import SimulationRequest
 from src.models.responses import (
-    SimulationResponse,
-    ErrorResponse,
-    DadosSimulacao,
-    TaxasAplicadas,
-    ResultadoFinanciamento,
+    Analise,
     Comparativo,
-    Analise
-)
-from src.models.domain import (
-    Indicador,
-    TaxaJuros,
-    Parcela,
-    TabelaAmortizacao,
-    ResultadoCalculo
+    DadosSimulacao,
+    ErrorResponse,
+    ResultadoFinanciamento,
+    SimulationResponse,
+    TaxasAplicadas,
 )
 
 __all__ = [
     # Requests
     "SimulationRequest",
-    
+
     # Responses
     "SimulationResponse",
     "ErrorResponse",
@@ -31,7 +25,7 @@ __all__ = [
     "ResultadoFinanciamento",
     "Comparativo",
     "Analise",
-    
+
     # Domain
     "Indicador",
     "TaxaJuros",

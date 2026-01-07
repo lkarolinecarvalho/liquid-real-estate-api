@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 
 def create_response(
@@ -13,10 +13,10 @@ def create_response(
         'Access-Control-Allow-Headers': '*',
         'Access-Control-Allow-Methods': '*'
     }
-    
+
     if headers:
         default_headers.update(headers)
-    
+
     return {
         'statusCode': status_code,
         'headers': default_headers,
@@ -34,13 +34,13 @@ def create_error_response(
         'error': True,
         'message': message
     }
-    
+
     if error_code:
         error_body['error_code'] = error_code
-    
+
     if details:
         error_body['details'] = details
-    
+
     return create_response(
         data=error_body,
         status_code=status_code

@@ -13,7 +13,7 @@ class CalculationException(Exception):
 def handle_exception(exception: Exception, context: str = "") -> None:
     import logging
     logger = logging.getLogger(__name__)
-    
+
     logger.error(
         f"Erro capturado: {context}",
         extra={

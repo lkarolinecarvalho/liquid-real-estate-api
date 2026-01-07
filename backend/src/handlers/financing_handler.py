@@ -1,26 +1,21 @@
 import json
-import logging
 from datetime import datetime, timezone
-from typing import Dict, Any
+from typing import Any, Dict
 
 from pydantic import ValidationError
 
 from src.models.requests import SimulationRequest
 from src.services import FinancingService
 from src.services.dynamodb_service import get_dynamodb_service
+from src.utils.exceptions import BusinessException, ExternalServiceException
 from src.utils.logger import setup_logger
-from src.utils.exceptions import (
-    BusinessException,
-    ExternalServiceException,
-    handle_exception
-)
 
 logger = setup_logger(__name__)
 
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     request_id = context.request_id if hasattr(context, 'request_id') else 'local'
-    
+
     logger.info(
         "Requisição recebida",
         extra={
@@ -29,7 +24,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             "method": event.get("httpMethod")
         }
     )
-    
+
     try:
         try:
             body = _parse_body(event)
@@ -48,7 +43,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 details=str(e),
                 request_id=request_id
             )
-        
+
         try:
             simulation_request = SimulationRequest(**body)
         except ValidationError as e:
@@ -72,13 +67,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 ],
                 request_id=request_id
             )
-        
+
         service = FinancingService()
         try:
             result = service.simular(simulation_request)
         finally:
             service.close()
-        
+
         logger.info(
             "Simulação concluída com sucesso",
             extra={
@@ -86,32 +81,32 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 "parcela_mensal": result.resultado.parcela_mensal
             }
         )
-        
+
         # ✨ NOVO: Persistir no DynamoDB
         simulation_id = None
         try:
             headers = event.get('headers', {})
             user_identifier = headers.get('x-user-id') or \
                 event.get('requestContext', {}).get('http', {}).get('sourceIp', 'unknown')
-            
+
             # Converte resultado para dict
             result_dict = result.model_dump(mode='json')
-            
+
             db_service = get_dynamodb_service()
             db_result = db_service.save_simulation(
                 simulation_data=result_dict,
                 user_identifier=user_identifier
             )
-            
+
             simulation_id = db_result['simulation_id']
             logger.info("Simulação persistida", extra={'simulation_id': simulation_id})
-            
+
         except Exception as db_error:
             logger.warning(f"Erro ao persistir no DynamoDB: {str(db_error)}", exc_info=True)
             # Continua sem quebrar - persistência é opcional
-        
+
         return _success_response(result, request_id, simulation_id)
-        
+
     except ExternalServiceException as e:
         logger.error(
             "Erro em serviço externo",
@@ -127,7 +122,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             details=str(e),
             request_id=request_id
         )
-        
+
     except BusinessException as e:
         logger.error(
             "Erro de negócio",
@@ -142,7 +137,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             message=str(e),
             request_id=request_id
         )
-        
+
     except Exception as e:
         logger.exception(
             "Erro não tratado",
@@ -162,25 +157,25 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
 def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
     body = event.get("body", "{}")
-    
+
     if isinstance(body, str):
         try:
             return json.loads(body)
         except json.JSONDecodeError:
             raise ValueError("Body JSON inválido")
-    
+
     return body
 
 
 def _success_response(result: Any, request_id: str, simulation_id: str = None) -> Dict[str, Any]:
     response_dict = result.model_dump(mode='json')
-    
+
     response_dict['request_id'] = request_id
-    
+
     # ✨ NOVO: Adiciona simulation_id se foi salvo no DynamoDB
     if simulation_id:
         response_dict['simulation_id'] = simulation_id
-    
+
     return {
         "statusCode": 200,
         "headers": {
@@ -208,13 +203,13 @@ def _error_response(
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
     }
-    
+
     if details:
         error_body["error"]["details"] = details
-    
+
     if request_id:
         error_body["error"]["request_id"] = request_id
-    
+
     return {
         "statusCode": status_code,
         "headers": {

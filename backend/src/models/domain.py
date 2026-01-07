@@ -3,7 +3,7 @@ from typing import List, Literal
 
 
 @dataclass
-class Indicador:    
+class Indicador:
     tipo: Literal["SELIC", "IPCA", "TAXA_BASE"]
     valor: float
     fonte: str
@@ -11,7 +11,7 @@ class Indicador:
 
 
 @dataclass
-class TaxaJuros:    
+class TaxaJuros:
     taxa_anual: float
     taxa_mensal: float
     indicador: Indicador
@@ -19,13 +19,13 @@ class TaxaJuros:
 
 
 @dataclass
-class Parcela:    
+class Parcela:
     numero: int
     valor_parcela: float
     valor_juros: float
     valor_amortizacao: float
     saldo_devedor: float
-    
+
     def to_dict(self) -> dict:
         return {
             "mes": self.numero,
@@ -37,30 +37,30 @@ class Parcela:
 
 
 @dataclass
-class TabelaAmortizacao:    
+class TabelaAmortizacao:
     parcelas: List[Parcela]
     total_pago: float
     total_juros: float
-    
+
     def primeira_parcela(self) -> Parcela:
         return self.parcelas[0]
-    
+
     def ultima_parcela(self) -> Parcela:
         return self.parcelas[-1]
-    
+
     def resumo(self, num_pontos: int = 12) -> List[Parcela]:
         total_parcelas = len(self.parcelas)
         if total_parcelas <= num_pontos:
             return self.parcelas
-        
+
         indices = [0]
-        
+
         step = total_parcelas // (num_pontos - 1)
         for i in range(1, num_pontos - 1):
             indices.append(i * step)
-        
+
         indices.append(total_parcelas - 1)
-        
+
         return [self.parcelas[i] for i in indices]
 
 
@@ -69,7 +69,7 @@ class ResultadoCalculo:
     tabela: TabelaAmortizacao
     parcela_mensal: float
     taxa: TaxaJuros
-    
+
     @property
     def percentual_juros(self) -> float:
 
