@@ -17,12 +17,17 @@ interface AmortizationChartProps {
 }
 
 export default function AmortizationChart({ data }: AmortizationChartProps) {
-  // Preparar dados para o gráfico
-  const chartData = data.tabela_amortizacao_resumida.map((parcela) => ({
+  const tabela = data?.tabela_amortizacao_resumida;
+  
+  if (!tabela || tabela.length === 0) {
+    return null;
+  }
+
+  const chartData = tabela.map((parcela) => ({
     mes: parcela.mes,
     juros: parcela.juros,
     amortizacao: parcela.amortizacao,
-    saldo: parcela.saldo_devedor,
+    saldo: parcela.saldo_devedor
   }));
 
   const formatCurrency = (value: number) => {
