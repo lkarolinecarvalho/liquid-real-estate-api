@@ -1,0 +1,50 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run Linters
+        working-directory: backend
+        run: |
+          ruff check src/
+          black --check src/
+
+      - name: Run Tests
+        working-directory: backend
+        run: |
+          pytest tests/ -v --cov=src --cov-report=term-missing
+
+      - name: PR Validation Summary
+        if: success()
+        run: |
+          echo "### PR Validation Passed!" >> $GITHUB_STEP_SUMMARY
+          echo "All checks passed. Ready to merge!" >> $GITHUB_STEP_SUMMARY
+
+      - name: PR Validation Failed
+        if: failure()
+        run: |
+          echo "### PR Validation Failed" >> $GITHUB_STEP_SUMMARY
+          echo "Please fix the issues above before merging." >> $GITHUB_STEP_SUMMARY
