@@ -7,6 +7,7 @@ from pydantic import ValidationError
 
 from src.models.requests import SimulationRequest
 from src.services import FinancingService
+from src.services.dynamodb_service import get_dynamodb_service
 from src.utils.logger import setup_logger
 from src.utils.exceptions import (
     BusinessException,
@@ -86,7 +87,30 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         )
         
-        return _success_response(result, request_id)
+        # ✨ NOVO: Persistir no DynamoDB
+        simulation_id = None
+        try:
+            headers = event.get('headers', {})
+            user_identifier = headers.get('x-user-id') or \
+                event.get('requestContext', {}).get('http', {}).get('sourceIp', 'unknown')
+            
+            # Converte resultado para dict
+            result_dict = result.model_dump(mode='json')
+            
+            db_service = get_dynamodb_service()
+            db_result = db_service.save_simulation(
+                simulation_data=result_dict,
+                user_identifier=user_identifier
+            )
+            
+            simulation_id = db_result['simulation_id']
+            logger.info("Simulação persistida", extra={'simulation_id': simulation_id})
+            
+        except Exception as db_error:
+            logger.warning(f"Erro ao persistir no DynamoDB: {str(db_error)}", exc_info=True)
+            # Continua sem quebrar - persistência é opcional
+        
+        return _success_response(result, request_id, simulation_id)
         
     except ExternalServiceException as e:
         logger.error(
@@ -148,10 +172,14 @@ def _parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
     return body
 
 
-def _success_response(result: Any, request_id: str) -> Dict[str, Any]:
+def _success_response(result: Any, request_id: str, simulation_id: str = None) -> Dict[str, Any]:
     response_dict = result.model_dump(mode='json')
     
     response_dict['request_id'] = request_id
+    
+    # ✨ NOVO: Adiciona simulation_id se foi salvo no DynamoDB
+    if simulation_id:
+        response_dict['simulation_id'] = simulation_id
     
     return {
         "statusCode": 200,

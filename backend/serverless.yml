@@ -24,6 +24,7 @@ provider:
     API_TIMEOUT: "3"
     TAXA_BASE_ANUAL: "10.0"
     TAXA_MEDIA_NACIONAL: "9.80"
+    DYNAMODB_TABLE: ${self:custom.dynamoTableName}
   
   # Permissões IAM básicas
   iam:
@@ -35,6 +36,19 @@ provider:
             - logs:CreateLogStream
             - logs:PutLogEvents
           Resource: "*"
+        
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableName}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableName}/index/*
+
+custom:
+  dynamoTableName: financing-simulations-${self:provider.stage}
 
 # Funções Lambda
 functions:
@@ -42,11 +56,36 @@ functions:
     handler: src.handlers.financing_handler.handler
     description: Simula financiamento imobiliário
     layers:
-      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:2
+      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:4
     events:
       - httpApi:
           path: /financing/simulate
           method: post
+  getHistory:
+    handler: src.handlers.history_handler.handler
+    description: Busca histórico de simulações
+    layers:
+      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:4
+    events:
+      - httpApi:
+          path: /financing/history
+          method: get
+          cors:
+            allowOrigins:
+              - '*'
+  
+  getSimulation:
+    handler: src.handlers.history_handler.get_by_id
+    description: Busca simulação específica por ID
+    layers:
+      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:4
+    events:
+      - httpApi:
+          path: /financing/simulation/{id}
+          method: get
+          cors:
+            allowOrigins:
+              - '*'
   
   health:
     handler: src.handlers.health_handler.handler
@@ -55,6 +94,38 @@ functions:
       - httpApi:
           path: /health
           method: get
+
+resources:
+  Resources:
+    FinancingSimulationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamoTableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: simulation_id
+            AttributeType: S
+          - AttributeName: created_at
+            AttributeType: S
+          - AttributeName: user_identifier
+            AttributeType: S
+        KeySchema:
+          - AttributeName: simulation_id
+            KeyType: HASH
+          - AttributeName: created_at
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: UserIndex
+            KeySchema:
+              - AttributeName: user_identifier
+                KeyType: HASH
+              - AttributeName: created_at
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
 
 # Package - o que incluir no deploy
 package:
@@ -68,3 +139,4 @@ package:
     - '!venv/**'
     - '!tests/**'
     - '!*.md'
+    - 'src/**'
