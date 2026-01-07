@@ -56,7 +56,7 @@ functions:
     handler: src.handlers.financing_handler.handler
     description: Simula financiamento imobiliário
     layers:
-      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:4
+      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:5
     events:
       - httpApi:
           path: /financing/simulate
@@ -65,7 +65,7 @@ functions:
     handler: src.handlers.history_handler.handler
     description: Busca histórico de simulações
     layers:
-      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:4
+      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:5
     events:
       - httpApi:
           path: /financing/history
@@ -78,7 +78,7 @@ functions:
     handler: src.handlers.history_handler.get_by_id
     description: Busca simulação específica por ID
     layers:
-      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:4
+      - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:5
     events:
       - httpApi:
           path: /financing/simulation/{id}

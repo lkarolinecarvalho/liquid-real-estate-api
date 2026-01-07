@@ -12,7 +12,7 @@ on:
       - 'backend/**'
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: '3.10'
   AWS_REGION: us-east-1
 
 jobs:
