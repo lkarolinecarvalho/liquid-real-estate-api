@@ -127,7 +127,7 @@ jobs:
       - name: Install Serverless Framework
         working-directory: backend
         run: |
-          npm install -g serverless
+          npm install -g serverless@3
           npm ci 2>/dev/null || npm install
 
       - name: Configure AWS credentials
@@ -180,7 +180,7 @@ jobs:
       - name: Install Serverless Framework
         working-directory: backend
         run: |
-          npm install -g serverless
+          npm install -g serverless@3
           npm ci 2>/dev/null || npm install
 
       - name: Configure AWS credentials
