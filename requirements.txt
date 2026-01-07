@@ -1,4 +1,8 @@
 pydantic==2.5.3
 httpx==0.25.2
-structlog==23.2.0
-aws-xray-sdk==2.12.1
+
+# Logging
+# structlog==23.2.0  # Removido, usando logging nativo
+
+# Type checking
+# mypy==1.7.1
