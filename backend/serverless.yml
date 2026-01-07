@@ -11,6 +11,10 @@ provider:
   memorySize: 512
   timeout: 30
   
+  # CORS global para HTTP API
+  httpApi:
+    cors: true
+  
   # Variáveis de ambiente
   environment:
     STAGE: ${self:provider.stage}
@@ -35,7 +39,7 @@ provider:
 # Funções Lambda
 functions:
   simulate:
-    handler: src/handlers/financing_handler.handler
+    handler: src.handlers.financing_handler.handler
     description: Simula financiamento imobiliário
     layers:
       - arn:aws:lambda:us-east-1:533267016725:layer:financing-simulator-deps:2

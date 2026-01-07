@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-liquid-orange: #FF6B00;
+  --color-liquid-black: #000000;
+  --color-liquid-gray-900: #0A0A0A;
+  --color-liquid-gray-800: #1A1A1A;
+  --color-liquid-gray-700: #2A2A2A;
+  --color-liquid-gray-600: #3A3A3A;
+  --color-liquid-gray-500: #6B7280;
+  --color-liquid-gray-400: #9CA3AF;
+  --color-liquid-gray-300: #D1D5DB;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--color-liquid-gray-700);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-liquid-black);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-liquid {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-liquid-gray-800);
+  border: 1px solid var(--color-liquid-gray-700);
+  border-radius: 0.5rem;
+  color: white;
+  transition: all 0.2s;
+}
+
+.input-liquid:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: var(--color-liquid-orange);
+  border-color: transparent;
+}
+
+.input-liquid::placeholder {
+  color: var(--color-liquid-gray-500);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-liquid {
+  background-color: var(--color-liquid-gray-900);
+  border: 1px solid var(--color-liquid-gray-700);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.stat-card {
+  background-color: var(--color-liquid-gray-900);
+  border: 1px solid var(--color-liquid-gray-700);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  border-color: rgba(255, 107, 0, 0.5);
+}
+
+.label-liquid {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-liquid-gray-300);
+  margin-bottom: 0.5rem;
+}
+
+.badge-orange {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(255, 107, 0, 0.1);
+  color: var(--color-liquid-orange);
+  border: 1px solid rgba(255, 107, 0, 0.2);
+}
+
+.badge-green {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge-yellow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(234, 179, 8, 0.1);
+  color: #EAB308;
+  border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.badge-red {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
 }
