@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any
 
 from pydantic import ValidationError
@@ -30,7 +30,23 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     )
     
     try:
-        body = _parse_body(event)
+        try:
+            body = _parse_body(event)
+        except ValueError as e:
+            logger.warning(
+                "Erro ao parsear JSON",
+                extra={
+                    "request_id": request_id,
+                    "error": str(e)
+                }
+            )
+            return _error_response(
+                status_code=400,
+                error_code="INVALID_JSON",
+                message="Body JSON inválido",
+                details=str(e),
+                request_id=request_id
+            )
         
         try:
             simulation_request = SimulationRequest(**body)
@@ -161,7 +177,7 @@ def _error_response(
         "error": {
             "code": error_code,
             "message": message,
-            "timestamp": datetime.utcnow().isoformat() + "Z"
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     }
     

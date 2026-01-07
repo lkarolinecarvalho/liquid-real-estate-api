@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import List, Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
-class IndicadorEconomico(BaseModel):
-    
+class IndicadorEconomico(BaseModel):    
     indicador_usado: Literal["SELIC", "IPCA", "TAXA_BASE"] = Field(
         description="Tipo de indicador utilizado no cálculo"
     )
@@ -19,8 +18,7 @@ class IndicadorEconomico(BaseModel):
     )
 
 
-class TaxasAplicadas(BaseModel):
-    
+class TaxasAplicadas(BaseModel):    
     indicador: IndicadorEconomico
     taxa_juros_anual: float = Field(
         description="Taxa de juros anual aplicada (%)"
@@ -34,6 +32,7 @@ class TaxasAplicadas(BaseModel):
 
 
 class DadosSimulacao(BaseModel):
+    """Dados da simulação realizada."""
     
     valor_imovel: float
     entrada: float
@@ -43,6 +42,7 @@ class DadosSimulacao(BaseModel):
 
 
 class DetalheParcela(BaseModel):
+    """Detalhes de uma parcela específica."""
     
     valor: float = Field(description="Valor total da parcela")
     juros: float = Field(description="Valor dos juros")
@@ -51,6 +51,7 @@ class DetalheParcela(BaseModel):
 
 
 class ResultadoFinanciamento(BaseModel):
+    """Resultado do cálculo de financiamento."""
     
     parcela_mensal: float = Field(
         description="Valor da parcela mensal (PRICE fixo, SAC primeira parcela)"
@@ -73,6 +74,7 @@ class ResultadoFinanciamento(BaseModel):
 
 
 class Comparativo(BaseModel):
+    """Comparativo com a média nacional."""
     
     taxa_media_nacional: float = Field(
         description="Taxa média nacional de financiamento (%)"
@@ -89,6 +91,7 @@ class Comparativo(BaseModel):
 
 
 class Analise(BaseModel):
+    """Análise de viabilidade do financiamento."""
     
     comprometimento_renda_sugerido: int = Field(
         default=30,
@@ -107,6 +110,7 @@ class Analise(BaseModel):
 
 
 class ParcelaAmortizacao(BaseModel):
+    """Linha da tabela de amortização."""
     
     mes: int
     parcela: float
@@ -116,6 +120,7 @@ class ParcelaAmortizacao(BaseModel):
 
 
 class SimulationResponse(BaseModel):
+    """Resposta completa da simulação de financiamento."""
     
     request_id: str = Field(
         description="ID único da requisição"
@@ -133,8 +138,8 @@ class SimulationResponse(BaseModel):
         description="Resumo da tabela de amortização (pontos chave)"
     )
     
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "request_id": "550e8400-e29b-41d4-a716-446655440000",
                 "timestamp": "2026-01-06T15:30:00Z",
@@ -200,20 +205,25 @@ class SimulationResponse(BaseModel):
                 ]
             }
         }
+    )
 
 
-class ErrorDetail(BaseModel):    
+class ErrorDetail(BaseModel):
+    """Detalhes de um erro de validação."""
+    
     field: str = Field(description="Campo que gerou o erro")
     message: str = Field(description="Mensagem de erro")
 
 
-class ErrorResponse(BaseModel):    
+class ErrorResponse(BaseModel):
+    """Resposta de erro padronizada."""
+    
     error: dict = Field(
         description="Objeto contendo informações do erro"
     )
     
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "error": {
                     "code": "VALIDATION_ERROR",
@@ -229,3 +239,4 @@ class ErrorResponse(BaseModel):
                 }
             }
         }
+    )

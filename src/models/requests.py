@@ -1,19 +1,8 @@
 from typing import Literal
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class SimulationRequest(BaseModel):
-    """
-    Modelo de requisição para simulação de financiamento imobiliário.
-    
-    Atributos:
-        valor_imovel: Valor total do imóvel em reais
-        entrada: Valor da entrada/sinal em reais
-        prazo_meses: Prazo do financiamento em meses
-        tipo_amortizacao: Sistema de amortização (PRICE ou SAC)
-        regiao: Sigla do estado (UF) para ajuste regional da taxa
-    """
-    
     valor_imovel: float = Field(
         gt=0,
         le=100_000_000,
@@ -49,11 +38,13 @@ class SimulationRequest(BaseModel):
     @field_validator('regiao')
     @classmethod
     def regiao_maiuscula(cls, v: str) -> str:
+        """Converte região para maiúsculas."""
         return v.upper()
     
     @field_validator('regiao')
     @classmethod
     def regiao_valida(cls, v: str) -> str:
+        """Valida se a região é uma UF brasileira válida."""
         ufs_validas = {
             "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
             "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
@@ -76,6 +67,7 @@ class SimulationRequest(BaseModel):
         return self.valor_imovel - self.entrada
     
     def percentual_entrada(self) -> float:
+        """Calcula o percentual da entrada sobre o valor do imóvel."""
         return (self.entrada / self.valor_imovel) * 100
     
     class Config:

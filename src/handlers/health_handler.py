@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any
 
 
@@ -7,7 +7,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     response_body = {
         "status": "healthy",
         "service": "financing-simulator",
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0"
     }
     
